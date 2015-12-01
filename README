@@ -18,3 +18,7 @@ PostgreSQL JDBC driver for TDEforPG is standard PostgreSQL JDBC with addition
 feature which support some Object relational mappers (ORM) to operate with 
 TDEforPG encrypted data.
 
+There are some version of PostgreSQL JDBC driver for TDEforPG. You can find 
+on the link below.
+ 
+       https://github.com/nec-postgres/pgjdbc 
