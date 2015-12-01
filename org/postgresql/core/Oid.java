@@ -1,6 +1,7 @@
 /*-------------------------------------------------------------------------
 *
-* Copyright (c) 2004-2014, PostgreSQL Global Development Group
+* Portions Copyright (c) 2004-2014, PostgreSQL Global Development Group
+* Portions Copyright (c) 2015, NEC Corporation
 *
 *
 *-------------------------------------------------------------------------
@@ -8,7 +9,8 @@
 package org.postgresql.core;
 
 import java.lang.reflect.Field;
-
+import java.nio.charset.Charset;
+import java.sql.SQLException;
 import org.postgresql.util.GT;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.PSQLState;
@@ -74,6 +76,12 @@ public class Oid {
     public static final int BOX = 603;
     public static final int JSONB_ARRAY = 3807;
 
+    // OID for TDE data types
+    public static int ENCRYPT_TEXT = 0;
+    public static int ENCRYPT_BYTEA = 0;
+    public static int ENCRYPT_NUMERIC = 0;
+    public static int ENCRYPT_TIMESTAMP = 0;
+	
     /**
      * Returns the name of the oid as string.
      *
@@ -112,5 +120,39 @@ public class Oid {
             // never happens
         }
         throw new PSQLException(GT.tr("oid type {0} not known and not a number", oid), PSQLState.INVALID_PARAMETER_VALUE);
+    }
+	
+    /**
+     * Add OIDs of encrypt_text, encrypt_bytea, encrypt_numeric, encrypt_timestamp to variables.
+     * @param baseCon It's used to execute SQL internally.
+     * @throws SQLException
+     */
+    public static void setEncryptTypeOid(BaseConnection baseCon, Logger logger) throws SQLException{
+        String sql = "SELECT typname, oid FROM pg_type " +
+                     "WHERE typname in ('encrypt_text','encrypt_bytea','encrypt_numeric','encrypt_timestamp')";
+
+        java.sql.Statement stmt = baseCon.createStatement();
+        java.sql.ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next()) {
+            switch (rs.getString("typname")) {
+                case "encrypt_text" :
+                    ENCRYPT_TEXT = rs.getInt("oid");
+                    break;
+                case "encrypt_bytea" :
+                    ENCRYPT_BYTEA = rs.getInt("oid");
+                    break;
+                case "encrypt_numeric" :
+                    ENCRYPT_NUMERIC = rs.getInt("oid");
+                    break;
+                case "encrypt_timestamp" :
+                    ENCRYPT_TIMESTAMP = rs.getInt("oid");
+                    break;
+                default :
+                    break;
+            }
+            if (logger.logDebug()) {
+                logger.debug("TDEforPG: set Oid for "+rs.getString("typname"));
+            }
+        }
     }
 }

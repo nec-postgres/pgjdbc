@@ -1,6 +1,7 @@
 /*-------------------------------------------------------------------------
 *
-* Copyright (c) 2004-2014, PostgreSQL Global Development Group
+* Portions Copyright (c) 2004-2014, PostgreSQL Global Development Group
+* Portions Copyright (c) 2015, NEC Corporation
 *
 *
 *-------------------------------------------------------------------------
@@ -277,6 +278,10 @@ public abstract class AbstractJdbc2Connection implements BaseConnection
                     }
                 }
         );
+		
+        // set OIDs for TDE data types
+        Oid.setEncryptTypeOid(this,logger);
+
     }
 
     private Set<Integer> getOidSet(String oidList) throws PSQLException {
