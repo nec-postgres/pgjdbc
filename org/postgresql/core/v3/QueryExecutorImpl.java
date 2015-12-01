@@ -1415,6 +1415,18 @@ public class QueryExecutorImpl implements QueryExecutor {
      * {@link Field#BINARY_FORMAT}.
      */
     private boolean useBinary(Field field) {
+        // TDE datatypes should not using binary transfer,
+        // because it must be decrypted in server.
+        boolean isTDEdatatype = field.isTDEDataType();
+        if (isTDEdatatype)
+        {
+            if (logger.logDebug())
+            {
+                logger.debug("TDEforPG: TDE datatypes is not permitted to use binary transfer");
+            }
+            return false;
+        }
+
         int oid = field.getOID();
         return protoConnection.useBinaryForReceive(oid);
     }

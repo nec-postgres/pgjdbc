@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
 *
-* Copyright (c) 2003-2011, PostgreSQL Global Development Group
-*
+* Portions Copyright (c) 2003-2011, PostgreSQL Global Development Group
+* Portions Copyright (c) 2015, NEC Corporation
 *
 *-------------------------------------------------------------------------
 */
@@ -22,6 +22,7 @@ public class Field
     private final int mod;        // type modifier of this field
     private final String columnLabel; // Column label
     private String columnName;        // Column name
+    private boolean tdeDatatype = false; // is TDE datatype or not
 
     private int format = TEXT_FORMAT;   // In the V3 protocol each field has a format
     // 0 = text, 1 = binary
@@ -77,11 +78,35 @@ public class Field
     {
         this.columnLabel = columnLabel;
         this.columnName = columnName;
-        this.oid = oid;
+        // Update TDE data type's Oid 
+        // to equivalent plain data types.
+        if (oid == Oid.ENCRYPT_TEXT) {
+            this.tdeDatatype = true;
+            this.oid = Oid.TEXT;
+        } else if (oid == Oid.ENCRYPT_BYTEA) {
+            this.tdeDatatype = true;
+            this.oid = Oid.BYTEA;
+        } else if (oid == Oid.ENCRYPT_NUMERIC) {
+            this.tdeDatatype = true;
+            this.oid = Oid.NUMERIC;
+        } else if (oid == Oid.ENCRYPT_TIMESTAMP) {
+            this.tdeDatatype = true;
+            this.oid = Oid.TIMESTAMP;
+        } else {
+            this.oid = oid;
+        }
         this.length = length;
         this.mod = mod;
         this.tableOid = tableOid;
         this.positionInTable = positionInTable;
+    }
+
+    /*
+     * @return whether Field's data type is TDE datatype or not
+     */
+    public boolean isTDEDataType()
+    {
+        return tdeDatatype;
     }
 
     /*

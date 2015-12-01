@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
 *
-* Copyright (c) 2004-2011, PostgreSQL Global Development Group
-*
+* Portions Copyright (c) 2004-2011, PostgreSQL Global Development Group
+* Portions Copyright (c) 2015, NEC Corporation
 *
 *-------------------------------------------------------------------------
 */
@@ -149,6 +149,9 @@ public abstract class AbstractJdbc2Connection implements BaseConnection
         {
             setReadOnly(true);
         }
+
+        // set OIDs for TDE data types
+        Oid.setEncryptTypeOid(this,logger);
 
         // Formats that currently have binary protocol support
         Set<Integer> binaryOids = new HashSet<Integer>();
