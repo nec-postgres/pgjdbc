@@ -1,0 +1,11 @@
+Release version 9.4-1203 of JDBC driver for TDEforPG
+
+This release contains the addition of support some 
+Object relational mappers (ORM) to operate with 
+TDEforPG encrypted datatype. Please see link below for detail.
+
+https://github.com/nec-postgres/pgjdbc/wiki/Manual-(TDEforPG-JDBC)
+
+This is based on the release REL9_4_1203 of standard
+PostgreSQL JDBC driver.
+
